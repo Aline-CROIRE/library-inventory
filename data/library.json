@@ -18,5 +18,12 @@
             "author": "Kim",
             "available": true
         }
-    ]
+    ],
+    "borrowers": [
+        {
+            "id": "1",
+            "name": "alice"
+        }
+    ],
+    "borrowings":[]
 }
