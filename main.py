@@ -115,3 +115,6 @@ def return_book():
                     print(f"Book '{book['title']}' was not borrowed.")
                     return
         print(f"No book found with ID '{book_id}'.")
+
+    
+return_book()
