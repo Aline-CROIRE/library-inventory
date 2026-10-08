@@ -1,0 +1,22 @@
+{
+    "books": [
+        {
+            "id": "BK001",
+            "title": "Things Fall apart",
+            "author": "Celine",
+            "available": true
+        },
+        {
+            "id": "1",
+            "title": "the river",
+            "author": "kami",
+            "available": false
+        },
+        {
+            "id": "2",
+            "title": "Love you like you do",
+            "author": "Kim",
+            "available": true
+        }
+    ]
+}
