@@ -1,51 +1,56 @@
-from book import Book, EBook, AudioBook
-from borrower import Borrower
-from author import Author
+
+from library_service import (
+    add_book,
+    search_books,
+    borrow_book,
+    return_book,
+    show_available_books,
+    show_borrowed_books,
+    show_books_by_author,
+    show_borrowing_history,
+)
 
 
 def main():
-    book = Book(
-        "BK001",
-        "Things Fall Apart",
-        "Chinua Achebe"
-    )
+    actions = {
+        "1": add_book,
+        "2": search_books,
+        "3": show_available_books,
+        "4": show_borrowed_books,
+        "5": borrow_book,
+        "6": return_book,
+        "7": show_books_by_author,
+        "8": show_borrowing_history,
+    }
 
-    ebook = EBook(
-        "EB001",
-        "Python Basics",
-        "AmaliTech",
-        5.2
-    )
+    while True:
+        print("\n      LIBRARY INVENTORY   ")
+        print("1. Add a book")
+        print("2. Search books")
+        print("3. Show available books")
+        print("4. Show borrowed books")
+        print("5. Borrow a book")
+        print("6. Return a book")
+        print("7. Show books by author")
+        print("8. Show borrowing history")
+        print("9. Exit")
 
-    audiobook = AudioBook(
-        "AB001",
-        "The River Between",
-        "Ngugi wa Thiong'o",
-        420
-    )
+        choice = input("Choose an option (1-9): ").strip()
 
-    borrower = Borrower(
-        "BR001",
-        "Test Borrower"
-    )
+        if choice == "9":
+            print("Thank you for using the Library Inventory!")
+            break
 
-    author = Author(
-        "AU001",
-        "Chinua Achebe"
-    )
+        action = actions.get(choice)
 
-    print("\n--- Library Resources ---")
-    print(book)
-    print(book.display_info())
+        if action is None:
+            print("Invalid choice. Please enter a number from 1 to 9.")
+            continue
 
-    print(ebook.display_info())
-    print(audiobook.display_info())
-
-    print("\n--- Borrower ---")
-    print(borrower)
-
-    print("\n--- Author ---")
-    print(author)
+        try:
+            action()
+        except (OSError, ValueError) as error:
+            print(f"Operation could not be completed: {error}")
 
 
 if __name__ == "__main__":

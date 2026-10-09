@@ -7,23 +7,47 @@
             "available": true
         },
         {
-            "id": "1",
+            "id": "BK002",
             "title": "the river",
             "author": "kami",
             "available": true
         },
         {
-            "id": "2",
+            "id": "BK003",
             "title": "Love you like you do",
             "author": "Kim",
             "available": true
+        },
+        {
+            "id": "BK004",
+            "title": "one love",
+            "author": "aline",
+            "available": true
+        }
+    ],
+    "authors": [
+        {
+            "id": "AU001",
+            "name": "aline"
         }
     ],
     "borrowers": [
         {
-            "id": "1",
+            "id": "BR001",
             "name": "alice"
+        },
+        {
+            "id": "BR002",
+            "name": "kim"
         }
     ],
-    "borrowings":[]
+    "borrowings": [
+        {
+            "id": "BO001",
+            "book_id": "BK001",
+            "borrower_id": "BR002",
+            "borrowed_at": "2026-10-09T15:03:41",
+            "returned_at": "2026-10-09T15:04:03"
+        }
+    ]
 }
