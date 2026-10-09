@@ -10,18 +10,24 @@
             "id": "BK002",
             "title": "the river",
             "author": "kami",
-            "available": true
+            "available": false
         },
         {
             "id": "BK003",
             "title": "Love you like you do",
             "author": "Kim",
-            "available": true
+            "available": false
         },
         {
             "id": "BK004",
             "title": "one love",
             "author": "aline",
+            "available": false
+        },
+        {
+            "id": "BK005",
+            "title": "rainbow",
+            "author": "Amin",
             "available": true
         }
     ],
@@ -29,6 +35,10 @@
         {
             "id": "AU001",
             "name": "aline"
+        },
+        {
+            "id": "AU002",
+            "name": "Amin"
         }
     ],
     "borrowers": [
@@ -39,6 +49,18 @@
         {
             "id": "BR002",
             "name": "kim"
+        },
+        {
+            "id": "BR003",
+            "name": "Aline N"
+        },
+        {
+            "id": "BR004",
+            "name": "Ali"
+        },
+        {
+            "id": "BR005",
+            "name": "Kim K"
         }
     ],
     "borrowings": [
@@ -48,6 +70,34 @@
             "borrower_id": "BR002",
             "borrowed_at": "2026-10-09T15:03:41",
             "returned_at": "2026-10-09T15:04:03"
+        },
+        {
+            "id": "BO002",
+            "book_id": "BK002",
+            "borrower_id": "BR003",
+            "borrowed_at": "2026-10-09T15:25:46",
+            "returned_at": "2026-10-09T15:26:45"
+        },
+        {
+            "id": "BO003",
+            "book_id": "BK003",
+            "borrower_id": "BR003",
+            "borrowed_at": "2026-10-09T15:28:59",
+            "returned_at": null
+        },
+        {
+            "id": "BO004",
+            "book_id": "BK002",
+            "borrower_id": "BR004",
+            "borrowed_at": "2026-10-09T15:29:57",
+            "returned_at": null
+        },
+        {
+            "id": "BO005",
+            "book_id": "BK004",
+            "borrower_id": "BR005",
+            "borrowed_at": "2026-10-09T15:30:57",
+            "returned_at": null
         }
     ]
 }

@@ -4,6 +4,75 @@ from datetime import datetime
 from utils import load_library, save_library, generate_id
 
 
+
+def add_book():
+    print("\n  Add a New Book  ")
+
+    try:
+        library = load_library()
+
+        title = input("Enter book title: ").strip()
+        if not title:
+            print("Error: Book title cannot be empty.")
+            return
+
+        author_name = input("Enter author name: ").strip()
+        if not author_name:
+            print("Error: Author name cannot be empty.")
+            return
+
+        
+        duplicate = any(
+            book["title"].strip().casefold() == title.casefold()
+            and book["author"].strip().casefold()
+            == author_name.casefold()
+            for book in library["books"]
+        )
+
+        if duplicate:
+            confirm = input(
+                "A book with this title and author already exists. "
+                "Add another copy? (y/n): "
+            ).strip().casefold()
+
+            if confirm not in ("y", "yes"):
+                print("Book addition cancelled.")
+                return
+
+        book_id = generate_id(library["books"], "book")
+
+        author_exists = any(
+            author["name"].strip().casefold()
+            == author_name.casefold()
+            for author in library["authors"]
+        )
+
+        if not author_exists:
+            author_id = generate_id(library["authors"], "author")
+            library["authors"].append({
+                "id": author_id,
+                "name": author_name,
+            })
+
+        library["books"].append({
+            "id": book_id,
+            "title": title,
+            "author": author_name,
+            "available": True,
+        })
+
+        save_library(library)
+
+        print("\nBook added successfully!")
+        print(f"ID: {book_id}")
+        print(f"Title: {title}")
+        print(f"Author: {author_name}")
+        print("Status: Available")
+
+    except (OSError, ValueError, KeyError) as error:
+        print(f"Could not add the book: {error}")
+
+
 def _find_book(library, user_input):
     """Find a book by its displayed number or full ID."""
     value = user_input.strip()
@@ -18,48 +87,6 @@ def _find_book(library, user_input):
         (book for book in library["books"] if book["id"] == book_id),
         None,
     )
-
-
-def add_book():
-    library = load_library()
-
-    title = input("Enter book title: ").strip()
-    if not title:
-        print("Book title cannot be empty.")
-        return
-
-    author_name = input("Enter author name: ").strip()
-    if not author_name:
-        print("Author name cannot be empty.")
-        return
-
-    book_id = generate_id(library["books"], "book")
-
-   
-    author = next(
-        (
-            item for item in library["authors"]
-            if item["name"].casefold() == author_name.casefold()
-        ),
-        None,
-    )
-
-    if author is None:
-        author_id = generate_id(library["authors"], "author")
-        library["authors"].append({
-            "id": author_id,
-            "name": author_name,
-        })
-
-    library["books"].append({
-        "id": book_id,
-        "title": title,
-        "author": author_name,
-        "available": True,
-    })
-
-    
-    print(f"Book added successfully! Its number is {book_id}.")
 
 
 def search_books():
@@ -91,19 +118,19 @@ def search_books():
 
 def borrow_book():
     library = load_library()
-    book_number = input("Enter the book number: ").strip()
 
+    book_number = input("Enter the book number: ").strip()
     book = _find_book(library, book_number)
 
     if book is None:
-        print("Book not found. Please check the book number.")
+        print("Book not found.")
         return
 
     if not book["available"]:
-        print("That book is already borrowed.")
+        print("This book is already borrowed.")
         return
 
-    borrower_name = input("Enter borrower name: ").strip()
+    borrower_name = input("Enter your full name: ").strip()
 
     if not borrower_name:
         print("Borrower name cannot be empty.")
@@ -118,65 +145,91 @@ def borrow_book():
     )
 
     if borrower is None:
-        borrower_id = generate_id(library["borrowers"], "borrower")
         borrower = {
-            "id": borrower_id,
+            "id": generate_id(library["borrowers"], "borrower"),
             "name": borrower_name,
         }
         library["borrowers"].append(borrower)
 
-    borrowing_id = generate_id(library["borrowings"], "borrowing")
-
-    library["borrowings"].append({
-        "id": borrowing_id,
+    borrowing = {
+        "id": generate_id(library["borrowings"], "borrowing"),
         "book_id": book["id"],
         "borrower_id": borrower["id"],
-        "borrowed_at": datetime.now().isoformat(timespec="seconds"),
+        "borrowed_at": datetime.now().strftime("%Y-%m-%d"),
         "returned_at": None,
-    })
+    }
 
     book["available"] = False
+    library["borrowings"].append(borrowing)
+
     save_library(library)
 
-    print(
-        f"'{book['title']}' borrowed successfully by "
-        f"{borrower['name']}."
-    )
-
+    print("\nBorrowing successful!")
+    print(f"Book: {book['title']}")
+    print(f"Borrower: {borrower['name']}")
+    print(f"Borrowing reference: {borrowing['id']}")
 
 def return_book():
     library = load_library()
-    book_number = input("Enter the book number to return: ").strip()
 
+    book_number = input("Enter the book number to return: ").strip()
     book = _find_book(library, book_number)
 
     if book is None:
-        print("Book not found. Please check the book number.")
+        print("Book not found.")
         return
 
     if book["available"]:
-        print("That book is already available.")
+        print("This book is already marked as available.")
         return
 
-   
+    borrower_name = input(
+        "Enter the full name of the person who borrowed it: "
+    ).strip()
+
+    if not borrower_name:
+        print("Borrower name cannot be empty.")
+        return
+
+    borrower = next(
+        (
+            item for item in library["borrowers"]
+            if item["name"].casefold() == borrower_name.casefold()
+        ),
+        None,
+    )
+
+    if borrower is None:
+        print("Borrower not found. Return rejected.")
+        return
+
     borrowing = next(
         (
             record for record in reversed(library["borrowings"])
             if record["book_id"] == book["id"]
+            and record["borrower_id"] == borrower["id"]
             and record["returned_at"] is None
         ),
         None,
     )
 
     if borrowing is None:
-        print("No active borrowing record was found. Data was not changed.")
+        print(
+            "Return rejected: this borrower does not have "
+            "an active borrowing record for this book."
+        )
         return
 
-    borrowing["returned_at"] = datetime.now().isoformat(timespec="seconds")
+    borrowing["returned_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
     book["available"] = True
+
     save_library(library)
 
-    print(f"'{book['title']}' has been returned successfully.")
+    print("\nReturn successful!")
+    print(f"Book: {book['title']}")
+    print(f"Returned by: {borrower['name']}")
+    print(f"Borrowing reference: {borrowing['id']}")
 
 
 def show_available_books():
@@ -212,6 +265,7 @@ def show_borrowed_books():
 
 
 def show_books_by_author():
+
     library = load_library()
     author_name = input("Enter author name: ").strip()
 
@@ -234,10 +288,11 @@ def show_books_by_author():
         print(f"{book['id']} | {book['title']} | {status}")
 
 
-def show_borrowing_history():
+
     library = load_library()
 
     print("\n  Borrowing History   ")
+
     if not library["borrowings"]:
         print("No borrowing history found.")
         return
@@ -246,6 +301,7 @@ def show_borrowing_history():
         item["id"]: item["name"]
         for item in library["borrowers"]
     }
+
     books = {
         item["id"]: item["title"]
         for item in library["books"]
@@ -256,11 +312,87 @@ def show_borrowing_history():
         borrower_name = borrowers.get(
             record["borrower_id"], "Unknown borrower"
         )
-        status = (
-            "Returned" if record["returned_at"] else "Currently borrowed"
+
+        borrowed_at = datetime.fromisoformat(
+            record["borrowed_at"]
+        ).strftime("%Y-%m-%d")
+
+        if record.get("returned_at"):
+            returned_at = datetime.fromisoformat(
+                record["returned_at"]
+            ).strftime("%Y-%m-%d %H:%M:%S")
+            status = "Returned"
+        else:
+            returned_at = "Not yet returned"
+            status = "Currently borrowed"
+
+        
+        print(f"Book: {book_title}")
+        print(f"Borrower: {borrower_name}")
+        print(f"Borrowed date: {borrowed_at}")
+        print(f"Returned at: {returned_at}")
+        print(f"Status: {status}")
+
+
+def show_borrowing_history():
+    library = load_library()
+
+   
+    print("    BORROWING HISTORY  ")
+  
+
+    borrowings = library["borrowings"]
+
+    if not borrowings:
+        print("No borrowing records found.")
+        return
+
+    borrowers = {
+        borrower["id"]: borrower["name"]
+        for borrower in library["borrowers"]
+    }
+
+    books = {
+        book["id"]: book
+        for book in library["books"]
+    }
+
+    for number, record in enumerate(borrowings, start=1):
+        book = books.get(record["book_id"])
+        book_title = book["title"] if book else "Unknown book"
+        book_id = book["id"] if book else record["book_id"]
+
+        borrower_name = borrowers.get(
+            record["borrower_id"], "Unknown borrower"
         )
 
-        print(
-            f"{record['id']} | {book_title} | {borrower_name} | "
-            f"Borrowed: {record['borrowed_at']} | {status}"
-        )
+        borrowed_at = record.get("borrowed_at") or "Unknown date"
+        returned_at = record.get("returned_at")
+
+        if returned_at:
+            status = "RETURNED"
+        else:
+            returned_at = "Not yet returned"
+            status = "CURRENTLY BORROWED"
+
+        print(f"\nRecord #{number}")
+      
+        print(f"Borrowing ID : {record.get('id', 'N/A')}")
+        print(f"Book         : {book_title}")
+        print(f"Book ID      : {book_id}")
+        print(f"Borrower     : {borrower_name}")
+        print(f"Borrowed date: {borrowed_at}")
+        print(f"Returned at  : {returned_at}")
+        print(f"Status       : {status}")
+
+
+    print(f"Total borrowing records: {len(borrowings)}")
+
+    returned_count = sum(
+        1 for record in borrowings if record.get("returned_at")
+    )
+    active_count = len(borrowings) - returned_count
+
+    print(f"Books returned         : {returned_count}")
+    print(f"Currently borrowed     : {active_count}")
+
