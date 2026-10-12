@@ -1,4 +1,6 @@
 
+"""Entry point for the Library Inventory application."""
+
 from library_service import (
     add_book,
     search_books,
@@ -11,7 +13,8 @@ from library_service import (
 )
 
 
-def main():
+def main() -> None:
+    """Display the menu and dispatch user selections."""
     actions = {
         "1": add_book,
         "2": search_books,
@@ -24,7 +27,7 @@ def main():
     }
 
     while True:
-        print("\n      LIBRARY INVENTORY   ")
+        print("\n===== LIBRARY INVENTORY =====")
         print("1. Add a book")
         print("2. Search books")
         print("3. Show available books")
@@ -49,7 +52,7 @@ def main():
 
         try:
             action()
-        except (OSError, ValueError) as error:
+        except (OSError, ValueError, KeyError) as error:
             print(f"Operation could not be completed: {error}")
 
 

@@ -4,7 +4,7 @@
             "id": "BK001",
             "title": "Things Fall apart",
             "author": "Celine",
-            "available": true
+            "available": false
         },
         {
             "id": "BK002",
@@ -29,6 +29,18 @@
             "title": "rainbow",
             "author": "Amin",
             "available": true
+        },
+        {
+            "id": "BK006",
+            "title": "Time here",
+            "author": "KIm",
+            "available": true
+        },
+        {
+            "id": "BK007",
+            "title": "THE RAIN",
+            "author": "anne",
+            "available": true
         }
     ],
     "authors": [
@@ -39,6 +51,14 @@
         {
             "id": "AU002",
             "name": "Amin"
+        },
+        {
+            "id": "AU003",
+            "name": "KIm"
+        },
+        {
+            "id": "AU004",
+            "name": "anne"
         }
     ],
     "borrowers": [
@@ -61,6 +81,10 @@
         {
             "id": "BR005",
             "name": "Kim K"
+        },
+        {
+            "id": "BR006",
+            "name": "Aline niy"
         }
     ],
     "borrowings": [
@@ -97,6 +121,20 @@
             "book_id": "BK004",
             "borrower_id": "BR005",
             "borrowed_at": "2026-10-09T15:30:57",
+            "returned_at": null
+        },
+        {
+            "id": "BO006",
+            "book_id": "BK001",
+            "borrower_id": "BR006",
+            "borrowed_at": "2026-10-12",
+            "returned_at": "2026-10-12 16:07:11"
+        },
+        {
+            "id": "BO007",
+            "book_id": "BK001",
+            "borrower_id": "BR002",
+            "borrowed_at": "2026-10-12",
             "returned_at": null
         }
     ]
